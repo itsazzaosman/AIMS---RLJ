@@ -1,0 +1,45 @@
+{% extends "admin/core/base.html" %}
+{% load static %}
+
+{% block title %}Review Reminders{% endblock title %}
+{% block title-section %}Review Reminders{% endblock %}
+{% block title-sub %}{% include "admin/elements/article_title_sub_pii.html" %}{% endblock %}
+
+{% block css %}
+    {{ form.media.css }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% include "elements/breadcrumbs/review_base.html" with subpage="yes" %}
+    <li>Review Reminders</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <div class="large-12 columns">
+        <div class="box">
+            {% if not assignment.decision %}
+            <div class="title-area">
+                <h2>Send Request Reminder</h2>
+            </div>
+            <div class="content">
+                <p>As this review has not been accepted, you can send a reminder to the reviewer asking them to undertake the review.</p>
+                {% include "admin/elements/forms/errors.html" with form=form %}
+                <div class="card">
+                    <div class="card-divider">
+                        <h4>To {{ assignment.reviewer.full_name }}</h4>
+                        <h5>From {{ request.user.full_name }}</h5>
+                    </div>
+                </div>
+                {% include "admin/elements/email_form.html" with form=form form_id="send_review_reminder_form" button_name="request_reminder" %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    {{ form.media.js }}
+{% endblock %}
