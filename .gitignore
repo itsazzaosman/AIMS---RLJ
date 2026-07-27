@@ -152,3 +152,4 @@ jenkins/test-results
 jenkins/test_results
 
 src/file_editor
+.git_backup/
