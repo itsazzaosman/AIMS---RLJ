@@ -153,3 +153,6 @@ jenkins/test_results
 
 src/file_editor
 .git_backup/
+
+*.pub
+eval *
