@@ -7,6 +7,14 @@
 {% block navbarbrand %}{{ press.name }}{% endblock navbarbrand %}
 
 {% block body %}
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">Welcome to {{ request.press.name|default:"AZZA PRESS" }}</h1>
+        <p class="hero-subtitle">
+            Discover cutting-edge research, peer-reviewed journals, and the latest publications from our community of scholars and authors.
+        </p>
+        <a href="{% url 'press_journals' %}" class="btn-premium">Explore Our Journals</a>
+    </div>
 
     {% for element in homepage_elements %}
         {% include element.template_path %}
