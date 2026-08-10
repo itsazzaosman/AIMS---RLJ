@@ -6,7 +6,19 @@
 {% endblock navbar %}
 
 {% block body %}
-    {% for element in homepage_elements %}
-        {% include element.template_path %}
-    {% endfor %}
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">Welcome to {{ request.press.name|default:"AZZA PRESS" }}</h1>
+        <p class="hero-subtitle">
+            Discover cutting-edge research, peer-reviewed journals, and the latest publications from our community of scholars and authors.
+        </p>
+        <a href="{% url 'press_journals' %}" class="btn-premium">Explore Our Journals</a>
+    </div>
+
+    <!-- Dynamic Elements -->
+    <div class="mt-5">
+        {% for element in homepage_elements %}
+            {% include element.template_path %}
+        {% endfor %}
+    </div>
 {% endblock body %}
