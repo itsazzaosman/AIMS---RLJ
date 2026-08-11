@@ -7,15 +7,12 @@ FORCE_BUILTIN_XSL = False
 SECRET_KEY = "uxprsdhk^gzd-r=_287byolxn)$k6tsd8_cepl^s^tms2w1qrv"
 
 # This is the default redirect if no other sites are found.
-<<<<<<< HEAD
-DEFAULT_HOST = "https://www.example.org"
-=======
 
 DEFAULT_HOST = os.environ.get(
     "JANEWAY_DEFAULT_HOST",
     "http://localhost:8010/RLJ/",
 )
->>>>>>> docker-deployment
+
 EMAIL_BACKEND = (
     os.environ.get(
         "JANEWAY_EMAIL_BACKEND",
