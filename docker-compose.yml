@@ -31,6 +31,7 @@ services:
             - PGADMIN_CONFIG_SERVER_MODE=False
             - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
 
+<<<<<<< HEAD
   janeway-mysql:
     image: mysql:8.3
     volumes:
@@ -55,6 +56,9 @@ services:
       - "MYSQL_USER=${DB_USER}"
       - "MYSQL_DATABASE=${DB_NAME}"
 
+=======
+ 
+>>>>>>> docker-deployment
   start_dependencies:
     image: dadarek/wait-for-dependencies
     depends_on:
@@ -72,7 +76,11 @@ services:
       - ./src:/vol/janeway/src
       - ./lib:/vol/janeway/lib
       - ./logs:/vol/janeway/logs
+<<<<<<< HEAD
       - ./db/janeway.sqlite3:/db/janeway.sqlite3
+=======
+      - ./collected-static:/vol/janeway/src/collected-static
+>>>>>>> docker-deployment
     ports:
       - "${JANEWAY_PORT}:8000"
     environment:
