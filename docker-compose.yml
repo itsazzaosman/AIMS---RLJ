@@ -49,7 +49,7 @@ services:
       - ./src:/vol/janeway/src
       - ./lib:/vol/janeway/lib
       - ./logs:/vol/janeway/logs
-      - ./db/janeway.sqlite3:/db/janeway.sqlite3
+      - ./collected-static:/vol/janeway/src/collected-static
     ports:
       - "${JANEWAY_PORT}:8000"
     environment:

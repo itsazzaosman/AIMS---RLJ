@@ -156,3 +156,4 @@ src/file_editor
 
 *.pub
 eval *
+/collected-static
