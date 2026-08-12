@@ -90,6 +90,8 @@ services:
       - JANEWAY_EMAIL_HOST
       - JANEWAY_EMAIL_PORT
       - JANEWAY_EMAIL_USE_TLS
+      - JANEWAY_EMAIL_HOST_USER
+      - JANEWAY_EMAIL_HOST_PASSWORD
 
     depends_on:
       - "start_dependencies"
