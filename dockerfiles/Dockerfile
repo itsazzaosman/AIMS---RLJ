@@ -27,5 +27,6 @@ EXPOSE 8000
 STOPSIGNAL SIGINT
 
 ENTRYPOINT ["python", "src/manage.py"]
-CMD ["runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["sh", "-c", "PYTHONPATH=/vol/janeway/src python src/manage.py runserver 0.0.0.0:8000"]
 
