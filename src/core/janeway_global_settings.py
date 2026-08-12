@@ -445,18 +445,14 @@ MESSAGE_TAGS = {
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login/"
 
-EMAIL_BACKEND = (
-    os.environ.get(
-        "JANEWAY_EMAIL_BACKEND",
-    )
-    or "django.core.mail.backends.smtp.EmailBackend"
-)
+EMAIL_BACKEND = os.environ.get("JANEWAY_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = os.environ.get("JANEWAY_EMAIL_HOST", "")
-EMAIL_PORT = os.environ.get("JANEWAY_EMAIL_PORT", "")
+EMAIL_PORT = int(os.environ.get("JANEWAY_EMAIL_PORT", 465))
 EMAIL_HOST_USER = os.environ.get("JANEWAY_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("JANEWAY_EMAIL_HOST_PASSWORD", "")
-EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", True)
-DUMMY_EMAIL_DOMAIN = "@journal.com"
+EMAIL_USE_SSL = os.environ.get("JANEWAY_EMAIL_USE_SSL", "True") == "True"
+EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", "False") == "True"
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 # Settings for use with Mailgun
 MAILGUN_ACCESS_KEY = ""
@@ -731,3 +727,13 @@ DEFAULT_CROP_SIZE = (1500, 648)
 # This setting should only be enabled where CORS is properly
 # configured to stop misuse of this endpoint.
 API_ENABLE_ACCOUNT_ENDPOINTS = False
+
+DUMMY_EMAIL_DOMAIN = os.environ.get("DUMMY_EMAIL_DOMAIN", "journal.insozi.rw")
+
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8010")
+BASE_URL = SITE_URL
+
+# Site URL Enforcements for Local Environment
+SITE_URL = "http://localhost:8010"
+BASE_URL = "http://localhost:8010"
+DEFAULT_DOMAIN = "localhost:8010"

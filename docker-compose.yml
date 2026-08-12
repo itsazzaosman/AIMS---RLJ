@@ -66,7 +66,11 @@ services:
       - JANEWAY_EMAIL_BACKEND
       - JANEWAY_EMAIL_HOST
       - JANEWAY_EMAIL_PORT
+      - JANEWAY_EMAIL_HOST_USER
+      - JANEWAY_EMAIL_HOST_PASSWORD
+      - JANEWAY_EMAIL_USE_SSL
       - JANEWAY_EMAIL_USE_TLS
+      - DEFAULT_FROM_EMAIL
 
     depends_on:
       - "start_dependencies"
