@@ -5,6 +5,7 @@ ENV JANEWAY_SETTINGS_FILE=$JANEWAY_SETTINGS_FILE
 
 ADD . /vol/janeway
 WORKDIR /vol/janeway
+ENV PYTHONPATH=/vol/janeway/src
 
 RUN apt-get update
 RUN apt-get install -y pylint
@@ -27,3 +28,4 @@ STOPSIGNAL SIGINT
 
 ENTRYPOINT ["python", "src/manage.py"]
 CMD ["runserver", "0.0.0.0:8000"]
+
