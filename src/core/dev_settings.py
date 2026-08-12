@@ -15,7 +15,7 @@ EMAIL_BACKEND = (
     or "django.core.mail.backends.console.EmailBackend"
 )
 
-URL_CONFIG = "domain"  # path or domain
+URL_CONFIG = "path"  # path or domain
 
 MIDDLEWARE = (
     "utils.middleware.TimeMonitoring",
