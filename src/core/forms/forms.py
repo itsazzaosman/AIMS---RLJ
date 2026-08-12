@@ -163,7 +163,7 @@ class GetResetTokenForm(forms.Form):
     )
 
 
-class RegistrationForm(forms.ModelForm, CaptchaForm):
+class RegistrationForm(forms.ModelForm):
     """A form that creates a user, with no privileges,
     from the given username and password."""
 
@@ -199,7 +199,6 @@ class RegistrationForm(forms.ModelForm, CaptchaForm):
             "first_name",
             "middle_name",
             "last_name",
-            "suffix",
             "orcid",
         )
         widgets = {"orcid": forms.HiddenInput()}
