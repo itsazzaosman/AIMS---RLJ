@@ -195,7 +195,6 @@ class RegistrationForm(forms.ModelForm):
         model = models.Account
         fields = (
             "email",
-            "salutation",
             "first_name",
             "middle_name",
             "last_name",
