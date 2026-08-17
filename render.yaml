@@ -1,0 +1,57 @@
+databases:
+  - name: janeway-demo-db
+    plan: free
+    databaseName: janeway
+    user: janeway
+
+services:
+  - type: web
+    name: janeway-email-auth-demo
+    runtime: docker
+    dockerfilePath: ./dockerfiles/Dockerfile.render
+    dockerContext: .
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: JANEWAY_SETTINGS_MODULE
+        value: core.janeway_global_settings
+      - key: DB_VENDOR
+        value: postgres
+      - key: DB_HOST
+        fromDatabase:
+          name: janeway-demo-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: janeway-demo-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: janeway-demo-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: janeway-demo-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: janeway-demo-db
+          property: database
+      # Fill in after the first deploy once you know the assigned
+      # onrender.com hostname (see README note in the PR/deploy notes).
+      - key: JANEWAY_PRESS_DOMAIN
+        value: localhost
+      - key: JANEWAY_CSRF_TRUSTED_ORIGINS
+        value: ""
+      - key: JANEWAY_EMAIL_BACKEND
+        value: django.core.mail.backends.smtp.EmailBackend
+      - key: JANEWAY_EMAIL_HOST
+        value: smtp.gmail.com
+      - key: JANEWAY_EMAIL_PORT
+        value: "587"
+      - key: JANEWAY_EMAIL_USE_TLS
+        value: "True"
+      - key: JANEWAY_EMAIL_HOST_USER
+        sync: false
+      - key: JANEWAY_EMAIL_HOST_PASSWORD
+        sync: false

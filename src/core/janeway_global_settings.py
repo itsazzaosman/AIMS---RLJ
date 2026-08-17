@@ -45,6 +45,12 @@ DEBUG = False
 COMMAND = sys.argv[1:]
 IN_TEST_RUNNER = COMMAND[:1] == ["test"]
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    origin
+    for origin in os.environ.get("JANEWAY_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
