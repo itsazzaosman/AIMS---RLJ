@@ -100,6 +100,19 @@
                         inputs[index - 1].focus();
                     }
                 });
+
+                input.addEventListener("paste", function(e) {
+                    e.preventDefault();
+                    const digits = (e.clipboardData || window.clipboardData)
+                        .getData("text")
+                        .replace(/[^0-9]/g, "")
+                        .slice(0, inputs.length - index);
+                    digits.split("").forEach((digit, offset) => {
+                        inputs[index + offset].value = digit;
+                    });
+                    const next = Math.min(index + digits.length, inputs.length - 1);
+                    inputs[next].focus();
+                });
             });
 
             form.addEventListener("submit", function(e) {

@@ -480,7 +480,9 @@ def register(request, orcid_token=None):
                 ),
             )
             url = logic.reverse_with_next("core_confirm_account", next_url)
-            return redirect(f"{url}{'&' if '?' in url else '?'}email={new_user.email}")
+            return redirect(
+                f"{url}{'&' if '?' in url else '?'}{urlencode({'email': new_user.email})}"
+            )
 
     template = "admin/core/accounts/register.html"
     context["form"] = form
