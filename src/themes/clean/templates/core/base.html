@@ -111,35 +111,9 @@
 </head>
 <body>
 {% include "common/elements/skip_to_main_content.html" %}
-<div class="container">
+<div class="container-fluid">
     <header class="site-header">
-        <div id="journal-title">
-            <div class="row">
-                {% if request.journal and request.journal.header_image %}
-                    {% get_alt_text file_path=request.journal.header_image default=request.journal.name as header_alt_text %}
-                    <div class="col-md-2">
-                        <a href="{{ request.journal.site_url }}" aria-label="{% trans Home %}">
-                            <img src="{{ request.journal.header_image.url }}"
-                                 class="img-fluid header-image top-bar-image"
-                                 alt="{{ header_alt_text }}">
-                        </a>
-                    </div>
-
-                    {% if journal_settings.styling.display_journal_title %}
-                    <div class="col-md-10">
-                        <p class="journal-name">{{ request.journal.name }}</p>
-                    </div>
-                    {% endif %}
-            {% elif request.press and not request.journal %}
-                    <div class="col-md-12 text-center text-md-left">
-                        <a href="/" style="text-decoration: none;">
-                            <h1 class="premium-logo">{{ request.press.name|default:"AZZA PRESS" }}</h1>
-                        </a>
-                    </div>
-            {% endif %}
-            </div>
-
-        </div>
+        <!-- <div id="journal-title">...</div> Removed to prevent duplicate logo -->
         {% if request.journal %}
             {% include "core/nav.html" %}
         {% elif request.press %}

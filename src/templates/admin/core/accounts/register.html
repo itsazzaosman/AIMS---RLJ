@@ -1,122 +1,265 @@
-{% extends "admin/core/large_form.html" %}
-{% load i18n foundation %}
-
-{% block contextual_title %}
-  {% trans "Register for an account" %}
-{% endblock contextual_title %}
-
-{% block breadcrumbs %}
-  {{ block.super }}
-  <li>{% trans "Register for an account" %}</li>
-{% endblock breadcrumbs %}
-
-{% block nav %}{% endblock nav %}
-
-{% block title-section %}
-  <div class="text-align-center">
-    {% trans "Register for an account" %}
-  </div>
-{% endblock %}
-
-{% block form_content %}
-  {% include "admin/elements/forms/messages_in_callout.html" with form=form %}
-  <div class="flex wrap gap-1">
-    {% include "common/elements/orcid_registration.html" with button_classes="button orcid-button" %}
-  </div>
-  <div class="flex wrap gap-1">
-    {% include "admin/elements/forms/field.html" with field=form.email %}
-  </div>
-  <div class="flex wrap gap-1">
-    {% include "admin/elements/forms/field.html" with field=form.first_name %}
-    {% include "admin/elements/forms/field.html" with field=form.middle_name %}
-    {% include "admin/elements/forms/field.html" with field=form.last_name %}
-  </div>
-  <div class="flex wrap gap-1">
-    {% include "admin/elements/forms/field.html" with field=form.department %}
-    {% include "admin/elements/forms/field.html" with field=form.institution %}
-    {% include "admin/elements/forms/field.html" with field=form.country %}
-  </div>
-  {% if form.register_as_reader %}
-    {% include "admin/elements/forms/field.html" with field=form.register_as_reader %}
-  {% endif %}
-  <div><strong>{% trans "Password Rules" %}</strong></div>
-  <ul class="no-top-margin" style="list-style-type: none; padding-left: 0;">
-    {% include "common/elements/password_rules.html" %}
-  </ul>
-  <p>{% blocktrans %}
-    For more information read our <a href="javascript:void(0)"
-    data-open="password-modal">password guide</a>.
-  {% endblocktrans %}</p>
-  <div class="flex wrap gap-1">
-    {% include "admin/elements/forms/field.html" with field=form.password_1 %}
-    {% include "admin/elements/forms/field.html" with field=form.password_2 %}
-  </div>
-  {% if journal_settings.general.display_register_page_notice %}
-    {{ journal_settings.general.register_page_notice|safe }}
-  {% endif %}
-  <p>
-    {% trans "By registering an account you agree to our" %}
-    {% include "common/accounts/register_privacy_policy.html" %}.
-  </p>
-
-  <div class="flex wrap gap-1">
-    {% for hidden_field in form.hidden_fields %}
-      {{ hidden_field }}
-    {% endfor %}
-    <button type="submit" class="button secondary">
-      {% trans "Register" %}
-    </button>
-  </div>
-  {% include "admin/elements/forms/denotes_required.html" %}
-  {% include "admin/core/accounts/password_guide.html" %}
-{% endblock form_content %}
-
-{% block js %}
-  {% include "common/elements/edit_profile_js_block.html" %}
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var passwordInput = document.getElementById("id_password_1");
-        if (!passwordInput) return;
-        
-        var ruleLength = document.getElementById("rule-length");
-        var ruleUpper = document.getElementById("rule-upper");
-        var ruleNumber = document.getElementById("rule-number");
-        
-        var reqLength = document.getElementById("required-length-val");
-        var minLength = reqLength ? parseInt(reqLength.innerText, 10) : 0;
-        
-        function updateRules() {
-            var val = passwordInput.value;
-            
-            if (ruleLength) {
-                var icon = ruleLength.querySelector(".rule-icon");
-                if (val.length >= minLength) {
-                    icon.style.color = "green";
-                } else {
-                    icon.style.color = "lightgray";
-                }
-            }
-            
-            if (ruleUpper) {
-                var icon = ruleUpper.querySelector(".rule-icon");
-                if (/[A-Z]/.test(val)) {
-                    icon.style.color = "green";
-                } else {
-                    icon.style.color = "lightgray";
-                }
-            }
-            
-            if (ruleNumber) {
-                var icon = ruleNumber.querySelector(".rule-icon");
-                if (/[0-9]/.test(val)) {
-                    icon.style.color = "green";
-                } else {
-                    icon.style.color = "lightgray";
-                }
-            }
+{% load static i18n orcid next_url %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Register for an account" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Style the django form fields to match Tailwind */
+        input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: border-color 0.15s ease-in-out;
+            margin-bottom: 0.5rem;
         }
-        
-        passwordInput.addEventListener("input", updateRules);
-    });
-  </script>
-{% endblock %}
+        input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, select:focus {
+            outline: none;
+            border-color: #00004d;
+            box-shadow: 0 0 0 1px #00004d;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.375rem;
+        }
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        .errorlist {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+            list-style: none;
+            padding-left: 0;
+        }
+        /* Password rules styling */
+        .password-rules {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+        .password-rules ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .password-rules li {
+            margin-bottom: 0.25rem;
+        }
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            margin-top: 0.125rem;
+            border-radius: 0.25rem;
+            border: 1px solid #d1d5db;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen overflow-hidden bg-white">
+      
+      <!-- LEFT PANEL (FORM) -->
+      <div class="flex w-full flex-col px-6 lg:w-1/2 lg:px-16 overflow-y-auto py-12 custom-scrollbar">
+        <div class="w-full max-w-md mx-auto my-auto">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8 tracking-tight">Get Started Now</h1>
+            
+            {% if form.non_field_errors %}
+            <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <!-- Email -->
+                <div class="form-group mb-4">
+                    <label for="{{ form.email.id_for_label }}">Email address</label>
+                    {{ form.email }}
+                    {% if form.email.help_text %}<div class="help-text">{{ form.email.help_text }}</div>{% endif %}
+                    {% if form.email.errors %}{{ form.email.errors }}{% endif %}
+                </div>
+
+                <!-- Names -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-group">
+                        <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}{{ form.first_name.errors }}{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}{{ form.last_name.errors }}{% endif %}
+                    </div>
+                </div>
+
+                <!-- Passwords -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    <div class="form-group">
+                        <label for="{{ form.password_1.id_for_label }}">Password</label>
+                        {{ form.password_1 }}
+                        {% if form.password_1.errors %}{{ form.password_1.errors }}{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.password_2.id_for_label }}">Confirm Password</label>
+                        {{ form.password_2 }}
+                        {% if form.password_2.errors %}{{ form.password_2.errors }}{% endif %}
+                    </div>
+                </div>
+
+                <!-- Password Rules -->
+                <div class="password-rules bg-gray-50 p-4 rounded-lg mb-6 border border-gray-100">
+                    <strong class="text-gray-700">{% trans "Password Rules" %}</strong>
+                    {% include "common/elements/password_rules.html" %}
+                </div>
+                
+                <!-- Checkboxes -->
+                {% if form.register_as_reader %}
+                <div class="flex items-start mb-4">
+                    <div class="flex items-center">
+                        {{ form.register_as_reader }}
+                    </div>
+                    <label for="{{ form.register_as_reader.id_for_label }}" class="ml-3 text-sm text-gray-700">
+                        Register for Article Notifications
+                    </label>
+                </div>
+                {% endif %}
+
+                <div class="flex items-start mb-8">
+                    <div class="flex items-center">
+                        {{ form.human_captcha }}
+                    </div>
+                    <label for="{{ form.human_captcha.id_for_label }}" class="ml-3 text-sm text-gray-700 font-medium">
+                        I agree to the terms & policy
+                    </label>
+                </div>
+                {% if form.human_captcha.errors %}<div class="text-red-600 text-xs mb-4 -mt-6">{{ form.human_captcha.errors }}</div>{% endif %}
+
+                <!-- Hidden Fields -->
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+
+                <button type="submit" class="w-full bg-[#000052] hover:bg-[#000033] text-white font-semibold py-3 px-4 rounded-lg transition duration-150 ease-in-out text-sm mb-6">
+                    Signup
+                </button>
+                
+                <div class="flex items-center mb-6">
+                    <div class="flex-1 border-t border-gray-200"></div>
+                    <span class="px-3 text-xs text-gray-500 font-medium uppercase">Or</span>
+                    <div class="flex-1 border-t border-gray-200"></div>
+                </div>
+                
+                <!-- Social Buttons -->
+                <div class="flex flex-wrap gap-3 mb-8">
+                    <button type="button" class="flex-1 min-w-[120px] flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-150 text-sm font-medium text-gray-700">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2">
+                        Google
+                    </button>
+                    <button type="button" class="flex-1 min-w-[120px] flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-150 text-sm font-medium text-gray-700">
+                        <img src="https://www.svgrepo.com/show/511330/apple-173.svg" alt="Apple" class="w-5 h-5 mr-2">
+                        Apple
+                    </button>
+                    {% if settings.ENABLE_ORCID %}
+                    <a href="{% url_with_next_and_orcid_action 'core_login_orcid' action='login' %}" class="flex-1 min-w-[120px] flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-150 text-sm font-medium text-gray-700 text-decoration-none">
+                        <img src="{% static 'common/img/icons/orcid.png' %}" alt="ORCiD" class="w-5 h-5 mr-2">
+                        ORCiD
+                    </a>
+                    {% else %}
+                    <button type="button" class="flex-1 min-w-[120px] flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-150 text-sm font-medium text-gray-700">
+                        <img src="{% static 'common/img/icons/orcid.png' %}" alt="ORCiD" class="w-5 h-5 mr-2">
+                        ORCiD
+                    </button>
+                    {% endif %}
+                </div>
+                
+                <div class="text-center text-sm text-gray-800 font-medium pb-8">
+                    Have an account? <a href="{% url_with_next 'core_login' %}" class="text-blue-600 hover:underline">Sign In</a>
+                </div>
+            </form>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL (IMAGE WITH OVERLAY) -->
+      <div class="relative hidden lg:block lg:w-1/2 p-4 bg-white">
+        <div class="relative h-full w-full rounded-[40px] overflow-hidden">
+            <img src="{% static 'common/img/balance_ilpd.jpg' %}" alt="Balance" class="absolute inset-0 h-full w-full object-cover" />
+            <div class="absolute inset-0 bg-[#000052]/80"></div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Scripts for Password Validation -->
+    {% include "common/elements/edit_profile_js_block.html" %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          var passwordInput = document.getElementById("id_password_1");
+          if (!passwordInput) return;
+          
+          var ruleLength = document.getElementById("rule-length");
+          var ruleUpper = document.getElementById("rule-upper");
+          var ruleNumber = document.getElementById("rule-number");
+          var ruleSymbol = document.getElementById("rule-symbol");
+          
+          var reqLength = document.getElementById("required-length-val");
+          var minLength = reqLength ? parseInt(reqLength.innerText, 10) : 0;
+          
+          function updateRules() {
+              var val = passwordInput.value;
+              
+              if (ruleLength) {
+                  var icon = ruleLength.querySelector(".rule-icon");
+                  if (val.length >= minLength) {
+                      icon.style.color = "green";
+                  } else {
+                      icon.style.color = "lightgray";
+                  }
+              }
+              
+              if (ruleUpper) {
+                  var icon = ruleUpper.querySelector(".rule-icon");
+                  if (/[A-Z]/.test(val)) {
+                      icon.style.color = "green";
+                  } else {
+                      icon.style.color = "lightgray";
+                  }
+              }
+              
+              if (ruleNumber) {
+                  var icon = ruleNumber.querySelector(".rule-icon");
+                  if (/[0-9]/.test(val)) {
+                      icon.style.color = "green";
+                  } else {
+                      icon.style.color = "lightgray";
+                  }
+              }
+              
+              if (ruleSymbol) {
+                  var icon = ruleSymbol.querySelector(".rule-icon");
+                  if (/[^A-Za-z0-9]/.test(val)) {
+                      icon.style.color = "green";
+                  } else {
+                      icon.style.color = "lightgray";
+                  }
+              }
+          }
+          
+          passwordInput.addEventListener("input", updateRules);
+      });
+    </script>
+</body>
+</html>
