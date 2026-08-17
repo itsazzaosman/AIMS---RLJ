@@ -1,92 +1,150 @@
-{% load svg from press_url %}
-{% load roles %}
+{% load static %}
 {% load i18n %}
-{% load hooks %}
-{% load next_url %}
+<style>
+    .ilpd-header {
+        background-color: #ffffff;
+        font-family: 'Inter', 'Roboto', sans-serif;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .ilpd-header-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .ilpd-header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .ilpd-header-logo {
+        height: 60px;
+        width: auto;
+    }
+    .ilpd-header-titles {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+    .ilpd-header-title-main {
+        font-size: 19px;
+        font-weight: 700;
+        color: #000;
+        margin: 0;
+        font-family: 'Inter', 'Roboto', sans-serif;
+    }
+    .ilpd-header-title-sub {
+        font-size: 13px;
+        color: #000;
+        margin-top: 4px;
+        font-family: 'Inter', 'Roboto', sans-serif;
+    }
+    .ilpd-header-nav {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+    .ilpd-header-nav a {
+        text-decoration: none;
+        color: #888;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: color 0.2s;
+    }
+    .ilpd-header-nav a:hover {
+        color: #333;
+    }
+    .ilpd-header-nav a.active {
+        color: #00a4e4;
+    }
+    .ilpd-header-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+    .ilpd-header-search svg {
+        width: 20px;
+        height: 20px;
+        color: #888;
+        cursor: pointer;
+    }
+    .ilpd-header-lang {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #888;
+        font-size: 13px;
+        cursor: pointer;
+    }
+    .ilpd-header-lang svg {
+        width: 14px;
+        height: 14px;
+    }
+    .ilpd-header-login {
+        text-decoration: none;
+        color: #e600e6;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        transition: color 0.2s;
+    }
+    .ilpd-header-login:hover {
+        color: #b300b3;
+    }
+    @media (max-width: 1024px) {
+        .ilpd-header-nav { display: none; }
+    }
+</style>
+<header class="ilpd-header">
+    <div class="ilpd-header-container">
+        <!-- Left: Logo & Text -->
+        <a href="/" style="text-decoration: none;">
+            <div class="ilpd-header-left">
+                <img src="{% static 'common/img/ilpd_logo.jpg' %}" alt="ILPD Logo" class="ilpd-header-logo">
+                <div class="ilpd-header-titles">
+                    <h1 class="ilpd-header-title-main">Institute of Legal Practice<br>and Development</h1>
+                    <span class="ilpd-header-title-sub">Excellence in Legal Practice</span>
+                </div>
+            </div>
+        </a>
 
-<nav class="navbar navbar-dark navbar-expand-lg navbar-custom">
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-            data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
-            aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto font-weight-bold">
-            <li class="nav-item"><a href="/" class="nav-link">{% trans 'Home' %}</a></li>
-            {% if journal_settings.general.enable_news_display %}
-                <li class="nav-item"><a href="{% url 'core_news_list' %}" class="nav-link">{% trans 'News' %}</a></li>{% endif %}
+        <!-- Middle: Nav Links -->
+        <nav class="ilpd-header-nav">
+            <a href="/" class="active">HOME</a>
+            <a href="#">ABOUT</a>
+            <a href="#">ACADEMIC</a>
+            <a href="#">FACILITIES</a>
+            <a href="#">SERVICES</a>
+            <a href="#">UPDATES</a>
+            <a href="#">RESOURCES</a>
+        </nav>
 
-            {% for item in navigation_items %}
-                {% if item.has_sub_nav %}
-                    <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle dropdown-button" id="{{ item.link_name|slugify }}"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ item.link_name }}
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="{{ item.link_name|slugify }}">
-                            {% if item.link %}
-                                <a href="/{{ item.link }}" class="dropdown-item">{{ item.link_name }}</a>{% endif %}
-                            {% for subnav in item.sub_nav_items %}
-                                <a href="/{{ subnav.link }}" class="dropdown-item">{{ subnav.link_name }}</a>
-                            {% endfor %}
-                        </div>
-                    </li>
-                {% elif not item.for_footer %}
-                    <li class="nav-item"><a href="/{{ item.link }}" class="nav-link">{{ item.link_name }}</a></li>
-                {% endif %}
-            {% endfor %}{% if request.press.publishes_journals and not request.press.disable_journals %}
-            <li class="nav-item"><a href="{% url 'press_journals' %}" class="nav-link">{% trans 'Journals' %}</a></li>
-        {% endif %}
-            {% if request.press.enable_preprints %}
-                <li class="nav-item dropdown">
-                    <button class="nav-link dropdown-toggle dropdown-button" id="preprints"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% trans 'Repositories' %}
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="preprints">
-                        {% for repo in request.press.live_repositories %}
-                            <a href="{{ repo.site_url }}" class="dropdown-item">{{ repo.name }}</a>
-                        {% endfor %}
-                    </div>
-                </li>
-                <li class="nav-item"></li>
-            {% endif %}
-            <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">{% trans 'Contact' %}</a></li>
-            {% hook 'nav_block' %}
-        </ul>
-        <ul class="nav navbar-nav flex-row justify-content-md-center justify-content-start flex-nowrap font-weight-bold">
-            {% if request.user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <button class="nav-link dropdown-toggle dropdown-button" id="user"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% trans 'Account' %}
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="user">
-                        {% user_has_role request 'editor' as user_is_editor %}
-                        {% if user_is_editor or request.user.is_staff %}
-                            <a class="dropdown-item" href="{% url 'core_manager_index' %}">{% trans 'Manager' %}</a>
-                        {% endif %}
-                        {% if request.user.is_staff %}
-                            <a class="dropdown-item" href="/admin/">{% trans 'Admin' %}</a>
-                        {% endif %}
-                        <a class="dropdown-item" href="{% url 'core_edit_profile' %}">{% trans 'Profile' %}</a>
-                        <a class="dropdown-item" href="{% url 'core_logout' %}">{% trans 'Logout' %}</a>
-                    </div>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                  <a href="{% url 'core_login' %}" class="nav-link">
-                    <i aria-hidden="true" class="fa fa-sign-in"></i>
-                    {% trans 'Log in' %}
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'core_register' %}" class="nav-link">
-                    <i aria-hidden="true" class="fa fa-user-plus"></i>
-                    {% trans 'Register' %}
-                  </a>
-                </li>
-            {% endif %}
-        </ul>
+        <!-- Right: Actions -->
+        <div class="ilpd-header-right">
+            <!-- Search Icon -->
+            <div class="ilpd-header-search">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            
+            <!-- Language Dropdown -->
+            <div class="ilpd-header-lang">
+                <span>English</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+
+            <!-- Login Button -->
+            <a href="{% url 'core_login' %}" class="ilpd-header-login">
+                LOGIN
+            </a>
+        </div>
     </div>
-</nav>
+</header>

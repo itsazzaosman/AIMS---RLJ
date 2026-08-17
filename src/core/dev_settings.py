@@ -14,6 +14,11 @@ EMAIL_BACKEND = (
     )
     or "django.core.mail.backends.console.EmailBackend"
 )
+EMAIL_HOST = os.environ.get("JANEWAY_EMAIL_HOST", "")
+EMAIL_PORT = os.environ.get("JANEWAY_EMAIL_PORT", "")
+EMAIL_HOST_USER = os.environ.get("JANEWAY_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("JANEWAY_EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", True)
 
 URL_CONFIG = "domain"  # path or domain
 
