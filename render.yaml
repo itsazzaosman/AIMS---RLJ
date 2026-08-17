@@ -11,7 +11,10 @@ services:
     dockerfilePath: ./dockerfiles/Dockerfile.render
     dockerContext: .
     plan: free
-    healthCheckPath: /
+    # No healthCheckPath: the homepage depends on the DB, which isn't
+    # ready until migrate + install_janeway finish in the entrypoint.
+    # Falling back to Render's plain TCP port-open check (15 min
+    # allowance) instead of an HTTP check that would time out sooner.
     envVars:
       - key: JANEWAY_SETTINGS_MODULE
         value: core.janeway_global_settings
