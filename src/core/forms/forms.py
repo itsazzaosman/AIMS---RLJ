@@ -236,6 +236,7 @@ class RegistrationForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password_1"])
         user.is_active = False
         import random
+
         user.confirmation_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
         user.email_sent = timezone.now()
 

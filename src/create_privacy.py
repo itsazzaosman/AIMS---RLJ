@@ -8,12 +8,12 @@ if j:
     Page.objects.get_or_create(
         content_type=ct,
         object_id=j.id,
-        name='privacy',
+        name="privacy",
         defaults={
-            'display_name': 'Privacy Policy',
-            'content': '<p>This is the privacy policy.</p>'
-        }
+            "display_name": "Privacy Policy",
+            "content": "<p>This is the privacy policy.</p>",
+        },
     )
-    print('Privacy Policy page created for Journal.')
+    print("Privacy Policy page created for Journal.")
 else:
-    print('No journal found.')
+    print("No journal found.")

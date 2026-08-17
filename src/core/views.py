@@ -524,7 +524,9 @@ def activate_account(request):
         email = request.POST.get("email", "")
         otp = request.POST.get("otp", "")
         try:
-            account = models.Account.objects.get(email=email, confirmation_code=otp, is_active=False)
+            account = models.Account.objects.get(
+                email=email, confirmation_code=otp, is_active=False
+            )
             account.is_active = True
             account.confirmation_code = None
             account.save()
