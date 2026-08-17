@@ -40,12 +40,15 @@ services:
         fromDatabase:
           name: janeway-demo-db
           property: database
-      # Fill in after the first deploy once you know the assigned
-      # onrender.com hostname (see README note in the PR/deploy notes).
+      # sync: false so Render never re-stamps these from this file on
+      # a Blueprint sync. Set once in the dashboard's Environment tab
+      # after the first deploy, once you know the assigned onrender.com
+      # hostname - a plain "value:" here would get silently reapplied
+      # (overwriting your manual edit) on every subsequent push/sync.
       - key: JANEWAY_PRESS_DOMAIN
-        value: localhost
+        sync: false
       - key: JANEWAY_CSRF_TRUSTED_ORIGINS
-        value: ""
+        sync: false
       - key: JANEWAY_EMAIL_BACKEND
         value: django.core.mail.backends.smtp.EmailBackend
       - key: JANEWAY_EMAIL_HOST
