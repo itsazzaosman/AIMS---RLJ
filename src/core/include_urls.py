@@ -66,7 +66,7 @@ urlpatterns = [
         name="core_register_with_orcid_token",
     ),
     re_path(
-        r"^register/activate/$",
+        r"^register/step/2/(?P<token>[\w-]+)/$",
         core_views.activate_account,
         name="core_confirm_account",
     ),

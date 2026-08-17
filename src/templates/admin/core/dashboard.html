@@ -1,14 +1,6 @@
 {% extends "admin/core/base.html" %}
 {% load roles securitytags %}
 
-{% block css %}
-{{ block.super }}
-<style>
-    #offCanvas.reveal-for-large { display: none !important; }
-    .off-canvas-content { margin-left: 0 !important; width: 100% !important; padding-left: 0 !important; transform: none !important; }
-</style>
-{% endblock css %}
-
 {% block title %}Dashboard{% endblock title %}
 {% block title-section %}Dashboard{% endblock %}
 {% block title-sub %}Summary{% endblock %}

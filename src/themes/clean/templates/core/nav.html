@@ -1,150 +1,135 @@
 {% load static %}
+{% load svg from press_url %}
+{% load roles %}
 {% load i18n %}
-<style>
-    .ilpd-header {
-        background-color: #ffffff;
-        font-family: 'Inter', 'Roboto', sans-serif;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .ilpd-header-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 12px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .ilpd-header-left {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .ilpd-header-logo {
-        height: 60px;
-        width: auto;
-    }
-    .ilpd-header-titles {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.2;
-    }
-    .ilpd-header-title-main {
-        font-size: 19px;
-        font-weight: 700;
-        color: #000;
-        margin: 0;
-        font-family: 'Inter', 'Roboto', sans-serif;
-    }
-    .ilpd-header-title-sub {
-        font-size: 13px;
-        color: #000;
-        margin-top: 4px;
-        font-family: 'Inter', 'Roboto', sans-serif;
-    }
-    .ilpd-header-nav {
-        display: flex;
-        align-items: center;
-        gap: 25px;
-    }
-    .ilpd-header-nav a {
-        text-decoration: none;
-        color: #888;
-        font-size: 13px;
-        font-weight: 600;
-        text-transform: uppercase;
-        transition: color 0.2s;
-    }
-    .ilpd-header-nav a:hover {
-        color: #333;
-    }
-    .ilpd-header-nav a.active {
-        color: #00a4e4;
-    }
-    .ilpd-header-right {
-        display: flex;
-        align-items: center;
-        gap: 25px;
-    }
-    .ilpd-header-search svg {
-        width: 20px;
-        height: 20px;
-        color: #888;
-        cursor: pointer;
-    }
-    .ilpd-header-lang {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        color: #888;
-        font-size: 13px;
-        cursor: pointer;
-    }
-    .ilpd-header-lang svg {
-        width: 14px;
-        height: 14px;
-    }
-    .ilpd-header-login {
-        text-decoration: none;
-        color: #e600e6;
-        font-weight: 700;
-        font-size: 14px;
-        text-transform: uppercase;
-        transition: color 0.2s;
-    }
-    .ilpd-header-login:hover {
-        color: #b300b3;
-    }
-    @media (max-width: 1024px) {
-        .ilpd-header-nav { display: none; }
-    }
-</style>
-<header class="ilpd-header">
-    <div class="ilpd-header-container">
-        <!-- Left: Logo & Text -->
-        <a href="/" style="text-decoration: none;">
-            <div class="ilpd-header-left">
-                <img src="{% static 'common/img/ilpd_logo.jpg' %}" alt="ILPD Logo" class="ilpd-header-logo">
-                <div class="ilpd-header-titles">
-                    <h1 class="ilpd-header-title-main">Institute of Legal Practice<br>and Development</h1>
-                    <span class="ilpd-header-title-sub">Excellence in Legal Practice</span>
-                </div>
-            </div>
-        </a>
+{% load hooks %}
+{% load next_url %}
 
-        <!-- Middle: Nav Links -->
-        <nav class="ilpd-header-nav">
-            <a href="/" class="active">HOME</a>
-            <a href="#">ABOUT</a>
-            <a href="#">ACADEMIC</a>
-            <a href="#">FACILITIES</a>
-            <a href="#">SERVICES</a>
-            <a href="#">UPDATES</a>
-            <a href="#">RESOURCES</a>
-        </nav>
+<nav class="navbar navbar-dark navbar-expand-lg navbar-custom">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav font-weight-bold d-flex w-100">
+            {% if request.journal.nav_home %}
+            <li class="nav-item"><a href="{% url 'website_index' %}" class="nav-link">{% trans 'Home' %}</a></li>{% endif %}
+            {% if request.journal.nav_news %}
+                <li class="nav-item"><a href="{% url 'core_news_list' %}" class="nav-link">{{ journal_settings.news.news_title }}</a></li>{% endif %}
 
-        <!-- Right: Actions -->
-        <div class="ilpd-header-right">
-            <!-- Search Icon -->
-            <div class="ilpd-header-search">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </div>
-            
-            <!-- Language Dropdown -->
-            <div class="ilpd-header-lang">
-                <span>English</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-            </div>
+            {% if request.journal.nav_articles %}
+                <li class="nav-item"><a href="{% url 'journal_articles' %}" class="nav-link">{% trans 'Articles' %}</a>
+                </li>{% endif %}
+            {% if request.journal.nav_issues %}
+                <li class="nav-item"><a href="{% url 'journal_issues' %}" class="nav-link">{% trans 'Issues' %}</a></li>{% endif %}
 
-            <!-- Login Button -->
-            <a href="{% url 'core_login' %}" class="ilpd-header-login">
-                LOGIN
-            </a>
-        </div>
+
+            {% if journal_settings.general.enable_editorial_display %}
+                {% if journal_settings.general.multi_page_editorial %}
+                <li class="nav-item dropdown">
+                    <button class="nav-link dropdown-toggle dropdown-button" id="editorial_team"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ journal_settings.styling.editorial_group_page_name }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="editorial_team">
+                        {% for group in request.journal.editorial_groups %}
+                            <li><a href="{% url 'editorial_team_group' group.pk %}" class="dropdown-item">{{ group.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item"><a href="{% url 'editorial_team' %}" class="nav-link">{{ journal_settings.styling.editorial_group_page_name }}</a>
+                </li>
+                {% endif %}
+            {% endif %}
+
+            {% if request.journal.nav_sub %}
+                <li class="nav-item"><a href="{% url 'journal_submissions' %}" class="nav-link">{% trans 'Submission' %}</a>
+                </li>{% endif %}
+            {% for item in navigation_items %}
+              {% if not item.for_footer %}
+                {% if item.has_sub_nav %}
+                  <li class="nav-item dropdown">
+                    <button
+                      class="nav-link dropdown-toggle dropdown-button"
+                      id="{{ item.link_name|slugify }}"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false">
+                        {{ item.link_name }}
+                    </button>
+                    <ul
+                      class="dropdown-menu"
+                      aria-labelledby="{{ item.link_name|slugify }}">
+                      {% for subnav in item.sub_nav_items %}
+                        <li>
+                          <a href="{{ subnav.url }}" class="dropdown-item">
+                            {{ subnav.link_name }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                      </ul>
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                    <a href="{{ item.url }}" class="nav-link">{{ item.link_name }}</a>
+                  </li>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            {% if request.journal.nav_contact %}
+                <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">{% trans 'Contact' %}</a></li>{% endif %}
+            {% hook 'nav_block' %}
+            {% if request.journal.nav_start and not journal_settings.general.disable_journal_submission %}
+                <li class="nav-item"><a href="{% url 'submission_start' %}" class="nav-link">{% trans 'Start Submission' %}</a></li>{% endif %}
+            {% if request.journal.nav_review %}
+                <li class="nav-item"><a href="{% url 'become_reviewer' %}" class="nav-link">
+                    {% trans 'Become a Reviewer' %}</a>
+                </li>{% endif %}
+            {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown ml-lg-auto">
+                    <button class="nav-link dropdown-toggle dropdown-button" href="" id="user"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% trans 'Account '%}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="user">
+                        <li><a class="dropdown-item" href="{% url 'core_dashboard' %}">{% trans 'Dashboard' %}</a></li>
+                        {% if not journal_settings.general.disable_journal_submission %}<a class="dropdown-item" href="{% url 'submission_start' %}">{% trans 'Submit' %}</a>{% endif %}
+                        {% user_has_role request 'editor' as user_is_editor %}
+                        {% if user_is_editor or request.user.is_staff %}
+                            <li><a class="dropdown-item" href="{% url 'kanban' %}">{% trans 'Kanban' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core_manager_index' %}">{% trans 'Manager' %}</a></li>
+                            {% if request.resolver_match.url_name and request.resolver_match.url_name == 'article_view' and article %}
+                                <li><a class="dropdown-item" href="{% url 'manage_archive_article' article.pk %}">{% trans 'Edit Article' %}</a></li>
+                            {% endif %}
+                            {% if request.resolver_match.url_name and request.resolver_match.url_name == 'journal_issue' and issue %}
+                                <li><a class="dropdown-item" href="{% url 'manage_issues_id' issue.pk %}">{% trans 'Edit Issue' %}</a></li>
+                            {% endif %}
+                            {% if request.resolver_match.url_name and request.resolver_match.url_name == 'core_news_item' and news_item %}
+                                <li><a class="dropdown-item" href="{% url 'core_manager_edit_news' news_item.pk %}">{% trans 'Edit News Item' %}</a></li>
+                            {% endif %}
+                        {% endif %}
+                        {% if request.user.is_staff %}
+                            <li><a class="dropdown-item" href="/admin/">{% trans 'Admin' %}</a></li>
+                        {% endif %}
+                        <li><a class="dropdown-item" href="{% url 'core_edit_profile' %}">{% trans 'Profile' %}</a></li>
+                        <li><a class="dropdown-item" href="{% url 'core_logout' %}">{% trans 'Logout' %}</a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item ml-lg-auto">
+                  <a href="{% url 'core_login' %}" class="nav-link">
+                    {% trans 'Log in' %}
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'core_register' %}" class="nav-link">
+                    {% trans 'Register' %}
+                  </a>
+                </li>
+            {% endif %}
+        </ul>
+
     </div>
-</header>
+</nav>

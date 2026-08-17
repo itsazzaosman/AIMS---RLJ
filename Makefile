@@ -55,10 +55,6 @@ ifdef DEBUG_SMTP
 	JANEWAY_EMAIL_HOST=janeway-debug-smtp
 	JANEWAY_EMAIL_PORT=1025
 	JANEWAY_EMAIL_USE_TLS=
-	export JANEWAY_EMAIL_BACKEND
-	export JANEWAY_EMAIL_HOST
-	export JANEWAY_EMAIL_PORT
-	export JANEWAY_EMAIL_USE_TLS
 endif
 LOCALES_DIR = ./src/core/locales
 
@@ -70,6 +66,11 @@ export DB_USER
 export DB_PASSWORD
 export JANEWAY_PORT
 export PGADMIN_PORT
+
+export JANEWAY_EMAIL_BACKEND
+export JANEWAY_EMAIL_HOST
+export JANEWAY_EMAIL_PORT
+export JANEWAY_EMAIL_USE_TLS
 
 COMPOSE_CMD ?= docker compose
 SUFFIX ?= $(shell date +%s)

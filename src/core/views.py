@@ -479,10 +479,7 @@ def register(request, orcid_token=None):
                     "instructions in the email that has been sent to you."
                 ),
             )
-            url = logic.reverse_with_next("core_confirm_account", next_url)
-            return redirect(
-                f"{url}{'&' if '?' in url else '?'}{urlencode({'email': new_user.email})}"
-            )
+            return redirect(logic.reverse_with_next("core_login", next_url))
 
     template = "admin/core/accounts/register.html"
     context["form"] = form
@@ -510,44 +507,37 @@ def orcid_registration(request, token):
     return render(request, template, context)
 
 
-def activate_account(request):
+def activate_account(request, token):
     """
     Activates a user account if an Account object with the
-    matching email and OTP is found and is not already active.
+    matching token is found and is not already active.
     :param request: HttpRequest object
+    :param token: string, Account.confirmation_token
     :return: HttpResponse object
     """
     next_url = request.GET.get("next", "")
-    email = request.GET.get("email", "")
 
-    if request.method == "POST":
-        email = request.POST.get("email", "")
-        otp = request.POST.get("otp", "")
-        try:
-            account = models.Account.objects.get(
-                email=email, confirmation_code=otp, is_active=False
-            )
-            account.is_active = True
-            account.confirmation_code = None
-            account.save()
+    try:
+        account = models.Account.objects.get(confirmation_code=token, is_active=False)
+    except models.Account.DoesNotExist:
+        account = None
 
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                _("Account activated"),
-            )
+    if account and request.method == "POST":
+        account.is_active = True
+        account.confirmation_code = None
+        account.save()
 
-            return redirect(logic.reverse_with_next("core_login", next_url))
-        except models.Account.DoesNotExist:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                _("Invalid email or confirmation code."),
-            )
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            _("Account activated"),
+        )
+
+        return redirect(logic.reverse_with_next("core_login", next_url))
 
     template = "admin/core/accounts/activate_account.html"
     context = {
-        "email": email,
+        "account": account,
     }
 
     return render(request, template, context)

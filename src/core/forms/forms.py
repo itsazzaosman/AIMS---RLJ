@@ -163,7 +163,7 @@ class GetResetTokenForm(forms.Form):
     )
 
 
-class RegistrationForm(forms.ModelForm):
+class RegistrationForm(forms.ModelForm, CaptchaForm):
     """A form that creates a user, with no privileges,
     from the given username and password."""
 
@@ -190,19 +190,16 @@ class RegistrationForm(forms.ModelForm):
         ),
         required=False,
     )
-    human_captcha = forms.BooleanField(
-        label="I am human",
-        help_text=_("Tick this box to prove you are human."),
-        required=True,
-    )
 
     class Meta:
         model = models.Account
         fields = (
             "email",
+            "salutation",
             "first_name",
             "middle_name",
             "last_name",
+            "suffix",
             "orcid",
         )
         widgets = {"orcid": forms.HiddenInput()}
@@ -235,9 +232,7 @@ class RegistrationForm(forms.ModelForm):
         user = super(RegistrationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password_1"])
         user.is_active = False
-        import random
-
-        user.confirmation_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
+        user.confirmation_code = uuid.uuid4()
         user.email_sent = timezone.now()
 
         if commit:
