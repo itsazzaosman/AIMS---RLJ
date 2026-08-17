@@ -35,6 +35,62 @@
     }</script>
 
     {% block css %}{% endblock %}
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #EC4899;
+            --dark: #111827;
+            --light: #F3F4F6;
+        }
+        .premium-logo {
+            font-weight: 900;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            margin-top: 1rem;
+            letter-spacing: -0.05em;
+        }
+        .hero-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            border-radius: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #6B7280;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-premium {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+        .btn-premium:hover {
+            background-color: #4338CA;
+            color: white;
+        }
+    </style>
     {% hook 'base_head_css' %}
 
     {% if request.journal %}
@@ -71,18 +127,10 @@
                         {{ request.repository.name }}
                     {% endif %}
                 {% else %}
-                    {% if 'svg' in request.press_cover %}
-                        <a href="/">
-                            {% svg request.press_cover %}
+                        <a href="/" style="text-decoration: none;">
+                            <h1 class="premium-logo" style="display:inline-block; margin-top: 0; margin-bottom: 0;">{{ request.press.name|default:"AZZA PRESS" }}</h1>
                             <span class="sr-only">{% trans 'Home' %}</span>
                         </a>
-                    {% else %}
-                        {% get_alt_text obj=request.press.thumbnail_image default=request.press.name as press_logo_alt %}
-                        <a href="/">
-                            <img class="top-bar-image" src="{% url 'press_cover_download' %}" alt="{{ press_logo_alt }}">
-                            <span class="sr-only">{% trans 'Home' %}</span>
-                        </a>
-                    {% endif %}
                 {% endif %}
             {% if request.journal  and journal_settings.styling.display_journal_title %}
             <div class="hide-for-medium-only{% if journal_settings.general.switch_language %} border-right{% endif %}" id="journal-title">
@@ -200,14 +248,14 @@
                 {% get_alt_text file_path=request.journal.press_image_override default=request.press.name as press_alt %}
                 {% svg_or_image request.journal.press_image_override alt_text=press_alt %}
             {% elif 'svg' in request.press_cover %}
-                <a href="{% press_url request %}" title="{{ request.press.name }}">
-                    {% svg request.press_cover %}
-                    <span class="sr-only"> {{ request.press.name }}</span>
+                <a href="{% press_url request %}" title="{{ request.press.name }}" style="text-decoration:none;">
+                    <h3 style="font-weight: 800; color: #4F46E5; margin: 0;">{{ request.press.name|default:"AZZA PRESS" }}</h3>
+                    <p style="color: #6B7280; margin-top: 0.5rem; font-size: 0.9rem;">Empowering Open Access Publishing.</p>
                 </a>
             {% else %}
-                <a href="https://janeway.systems" title="Janeway">
-                    {% svg "static/common/img/sample/janeway.svg" %}
-                    <span class="sr-only"> Janeway </span>
+                <a href="{% press_url request %}" title="{{ request.press.name }}" style="text-decoration:none;">
+                    <h3 style="font-weight: 800; color: #4F46E5; margin: 0;">{{ request.press.name|default:"AZZA PRESS" }}</h3>
+                    <p style="color: #6B7280; margin-top: 0.5rem; font-size: 0.9rem;">Empowering Open Access Publishing.</p>
                 </a>
             {% endif %}
         </div>

@@ -1,44 +1,128 @@
-{% extends "admin/core/small_form.html" %}
-{% load i18n foundation next_url %}
+{% load static i18n foundation next_url %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Activate Account" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        .otp-digit {
+            width: 50px;
+            height: 60px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
 
-{% block contextual_title %}
-  {% trans "Activate Account" %}
-{% endblock contextual_title %}
+        .otp-digit:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex items-center justify-center">
 
-{% block breadcrumbs %}
-  {{ block.super }}
-  <li>{% trans "Activate Account" %}</li>
-{% endblock breadcrumbs %}
-
-{% block title-section %}
-  <div class="text-align-center">
-    {% if account %}
-      {% trans "Activate Account" %}
-    {% else %}
-      {% trans "No account to activate" %}
-    {% endif %}
-  </div>
-{% endblock %}
-
-{% block form_content %}
-  {% if account %}
-    {% include "admin/elements/forms/messages_in_callout.html" with form=form %}
-    <p>{% blocktrans %}
-      You can complete the activation process by clicking the button
-      below.
-    {% endblocktrans %}</p>
-    <button class="button secondary expanded" name="activate" autofocus>
-      {% trans "Activate Account" %}
-    </button>
-  {% else %}
-    <p>{% blocktrans %}
-      Sorry, we could not find an account to activate, or your account is active
-      already. You can check if it is active by attempting to log in.
-    {% endblocktrans %}</p>
-    <div>
-      <a class="button secondary expanded" href="{% url_with_next 'core_login' %}">
-        {% trans "Log in" %}
-      </a>
+    <!-- BACKGROUND IMAGE WITH OVERLAY -->
+    <div class="absolute inset-0 z-0">
+        <img src="{% static 'common/img/balance_ilpd.jpg' %}" alt="Background" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="absolute inset-0 bg-[#000052]/80"></div>
     </div>
-  {% endif %}
-{% endblock form_content %}
+
+    <!-- OTP FORM CARD -->
+    <div class="relative z-10 w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 m-4">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-3">OTP</h1>
+            <p class="text-sm text-gray-500">We Send You Email Please Check Your Mail<br>And Complete OTP Code</p>
+        </div>
+
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-4 rounded-lg text-sm {% if message.tags == 'error' or message.tags == 'danger' %}bg-red-50 text-red-700 border border-red-200{% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" id="otp-form">
+            {% csrf_token %}
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="otp" id="final-otp">
+
+            <div class="flex justify-center gap-3 mb-8">
+                <input type="text" maxlength="1" class="otp-digit" autofocus>
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+            </div>
+
+            <button type="submit" class="w-full bg-[#000052] hover:bg-[#000033] text-white font-semibold py-3.5 px-4 rounded-xl transition duration-150 ease-in-out text-[17px]">
+                Confirm
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm text-gray-600">
+            Already have an account? <a href="{% url_with_next 'core_login' %}" class="text-[#000052] font-semibold hover:underline">Login</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputs = document.querySelectorAll(".otp-digit");
+            const form = document.getElementById("otp-form");
+            const finalOtp = document.getElementById("final-otp");
+
+            inputs.forEach((input, index) => {
+                input.addEventListener("input", function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.value && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener("keydown", function(e) {
+                    if (e.key === "Backspace" && !this.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener("paste", function(e) {
+                    e.preventDefault();
+                    const digits = (e.clipboardData || window.clipboardData)
+                        .getData("text")
+                        .replace(/[^0-9]/g, "")
+                        .slice(0, inputs.length - index);
+                    digits.split("").forEach((digit, offset) => {
+                        inputs[index + offset].value = digit;
+                    });
+                    const next = Math.min(index + digits.length, inputs.length - 1);
+                    inputs[next].focus();
+                });
+            });
+
+            form.addEventListener("submit", function(e) {
+                let otpValue = "";
+                inputs.forEach(input => {
+                    otpValue += input.value;
+                });
+                finalOtp.value = otpValue;
+            });
+        });
+    </script>
+</body>
+</html>
