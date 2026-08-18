@@ -31,30 +31,7 @@ services:
             - PGADMIN_CONFIG_SERVER_MODE=False
             - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
 
-  janeway-mysql:
-    image: mysql:8.3
-    volumes:
-      - ./db/mysql-data:/var/lib/mysql
-    ports:
-      - "${DB_PORT}"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - "MYSQL_PASSWORD=${DB_PASSWORD}"
-      - "MYSQL_USER=${DB_USER}"
-      - "MYSQL_DATABASE=${DB_NAME}"
-
-  janeway-mariadb:
-    image: mariadb/server:10.2.22
-    volumes:
-      - ./db/mariadb-data:/var/lib/mysql
-    ports:
-      - "${DB_PORT}"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - "MYSQL_PASSWORD=${DB_PASSWORD}"
-      - "MYSQL_USER=${DB_USER}"
-      - "MYSQL_DATABASE=${DB_NAME}"
-
+ 
   start_dependencies:
     image: dadarek/wait-for-dependencies
     depends_on:
@@ -72,7 +49,7 @@ services:
       - ./src:/vol/janeway/src
       - ./lib:/vol/janeway/lib
       - ./logs:/vol/janeway/logs
-      - ./db/janeway.sqlite3:/db/janeway.sqlite3
+      - ./collected-static:/vol/janeway/src/collected-static
     ports:
       - "${JANEWAY_PORT}:8000"
     environment:
@@ -89,7 +66,11 @@ services:
       - JANEWAY_EMAIL_BACKEND
       - JANEWAY_EMAIL_HOST
       - JANEWAY_EMAIL_PORT
+      - JANEWAY_EMAIL_HOST_USER
+      - JANEWAY_EMAIL_HOST_PASSWORD
+      - JANEWAY_EMAIL_USE_SSL
       - JANEWAY_EMAIL_USE_TLS
+      - DEFAULT_FROM_EMAIL
 
     depends_on:
       - "start_dependencies"
