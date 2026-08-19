@@ -4405,14 +4405,14 @@ ul.tagit input[type="text"] {
 :root {
   --primary-dark-color: #062657;
   --very-dark-primary-color: #06152D;
-  --primary-light-color: #2199e8;
+  --primary-light-color: #e200e2;
   --topbar-background-color: #FFFFFF;
   --menu-background-color: #FFFFFF;
   --menu-alternative-background-color: #FFFFFF;
   --menu-foreground-color: #000000;
-  --link-color: #2199e8;
-  --toc-link-color: #2199e8;
-  --figure-caption-background-color: #2199e8;
+  --link-color: #e200e2;
+  --toc-link-color: #e200e2;
+  --figure-caption-background-color: #e200e2;
   --figure-caption-color: #FFFFFF; }
 
 a {

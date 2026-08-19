@@ -11,7 +11,7 @@ nav.sidebar {
   top: 0px;
   left: 0px;
   height: 100%;
-  background: none repeat scroll 0 0 #6a0dad; /* purple sidebar */
+  background: none repeat scroll 0 0 #e200e2; /* purple sidebar */
   color: white;
   padding: 20px 10px; }
   nav.sidebar a#justify-icon {
@@ -50,7 +50,7 @@ nav.sidebar {
           position: relative;
           bottom: 2px; }
       nav.sidebar ul li.active {
-        background: none repeat scroll 0 0 #4b116e; /* darker purple for active */
+        background: none repeat scroll 0 0 #a100a1; /* darker active */
         border-radius: 4px;
         text-align: center;
         margin-left: -4px;

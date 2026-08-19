@@ -4835,7 +4835,7 @@ header {
     font-size: 0.8125rem; }
 
 .off-canvas {
-  background: #6a0dad; /* sidebar background */
+  background: #e200e2; /* sidebar background */
 }
 
 .off-canvas .close-button {
@@ -4845,7 +4845,7 @@ header {
     color: #b7bac0; }
 
 .off-canvas .menu > li.title > a {
-  background: #4b116e; /* darker purple for title */
+  background: #a100a1; /* darker active/title */
   pointer-events: none; }
 
 .off-canvas .menu > li.subtitle > a {
