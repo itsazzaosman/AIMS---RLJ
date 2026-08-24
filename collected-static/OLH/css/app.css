@@ -2,14 +2,25 @@
 @import url(https://fonts.googleapis.com/css?family=Merriweather:400,300,700);
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css);
 /**
- * Foundation for Sites by ZURB
+  --primary-light-color: #601A61;
+  
+  
  * Version 6.2.3
- * foundation.zurb.com
- * Licensed under MIT Open Source
- */
+  --link-color: #601A61;
+  --toc-link-color: #601A61;
+  --figure-caption-background-color: #601A61;
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-/**
-   * 1. Set default font family to sans-serif.
+a, a:visited { color: #601A61 !important; }
+a:hover, a:focus { color: #4a114a !important; }
+button, .button, input[type="submit"], input[type="button"], .success.button, .button.success {
+  background-color: #601A61 !important;
+  border-color: #601A61 !important;
+  color: #ffffff !important;
+}
+.admin ul, .off-canvas, .off-canvas .menu-title, .top-bar-left {
+  background-color: #601A61 !important;
+}
+.profile, .user-profile, .profile a { color: #601A61 !important; }
    * 2. Prevent iOS and IE text size adjust after device orientation change,
    *    without disabling user zoom.
    */
@@ -5072,8 +5083,8 @@ button.list-group-item {
 .list-group-item.active:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #4b116e;
-  border-color: #4b116e; }
+  background-color: #337ab7;
+  border-color: #337ab7; }
 
 .list-group-item.active .list-group-item-heading,
 .list-group-item.active:hover .list-group-item-heading,
@@ -5219,7 +5230,7 @@ button.list-group-item-danger.active:focus {
   margin-bottom: 0px !important; }
 
 .admin ul {
-  background-color: #6a0dad !important; }
+  background-color: #2199e8 !important; }
 
 .editorial-image {
   object-fit: cover;
@@ -5320,6 +5331,20 @@ button, .button, input[type="submit"], input[type="button"], .success.button, .b
 #reflist ul {
   padding-left: 0;
   margin-left: 0; }
+
+/* Force blue-styled buttons and related links to #e200e2 */
+.button, button, input[type="submit"], input[type="button"], .btn, a.button, .button.primary, .button.secondary, .btn-primary {
+  background-color: #e200e2 !important;
+  border-color: #e200e2 !important;
+  color: #ffffff !important;
+}
+.button:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover, a.button:hover, .btn-primary:hover {
+  background-color: #a100a1 !important;
+  border-color: #a100a1 !important;
+  color: #ffffff !important;
+}
+a, a.button { color: #e200e2 !important; }
+a:hover { color: #a100a1 !important; }
 
 #reflist li {
   word-wrap: break-word;

@@ -1,0 +1,12 @@
+/* Admin button/link overrides to match blue action color */
+.button, input[type="submit"], input[type="button"], .btn {
+  background-color: #e200e2 !important;
+  border-color: #e200e2 !important;
+  color: #ffffff !important;
+}
+.button:hover, input[type="submit"]:hover, input[type="button"]:hover, .btn:hover {
+  background-color: #a100a1 !important;
+  border-color: #a100a1 !important;
+}
+a, a.button { color: #e200e2 !important; }
+a:hover { color: #a100a1 !important; }
