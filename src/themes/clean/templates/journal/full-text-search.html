@@ -9,66 +9,246 @@
 
 {% block title %}{% trans "Search" %}{% endblock %}
 
-{% block body %}
+{% block css %}
+{{ block.super }}
+<style>
+    /* Modern UI Aesthetics */
+    body {
+        font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa;
+    }
 
-    <h1>{% trans 'Article Search Results' %}</h1>
+    .modern-header {
+        font-weight: 800;
+        font-size: 2.5rem;
+        letter-spacing: -0.03em;
+        background: linear-gradient(90deg, #2b5876 0%, #4e4376 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    .modern-article-card {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .modern-article-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+    
+    .modern-article-card .card-title {
+        font-weight: 700;
+        color: #2b5876;
+        line-height: 1.3;
+        margin-bottom: 0.5rem;
+    }
+    
+    .modern-article-card .card-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .modern-article-card .card-title a:hover {
+        color: #4e4376;
+    }
+
+    .modern-article-card .author-list {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #666;
+    }
+
+    .modern-article-card .article-meta {
+        font-size: 0.85rem;
+        color: #888;
+        background: #f8f9fa;
+        padding: 0.75rem 1.25rem;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .modern-article-card .article-meta i {
+        color: #aaa;
+        margin-right: 0.25rem;
+    }
+
+    .modern-search-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 2rem;
+        padding: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .modern-search-card:hover {
+        box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    }
+
+    .modern-search-card .form-group label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .modern-search-card input[type="text"], 
+    .modern-search-card select {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .modern-search-card input[type="text"]:focus, 
+    .modern-search-card select:focus {
+        border-color: #4e4376;
+        box-shadow: 0 0 0 3px rgba(78, 67, 118, 0.2);
+        outline: none;
+    }
+
+    .modern-btn-primary {
+        background: linear-gradient(135deg, #4e4376 0%, #2b5876 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(43, 88, 118, 0.3);
+    }
+
+    .modern-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(43, 88, 118, 0.4);
+        color: white;
+    }
+
+    /* Custom Checkboxes */
+    .form-check {
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-check-input {
+        margin-top: 0;
+        margin-right: 10px;
+        width: 1.2rem;
+        height: 1.2rem;
+        accent-color: #4e4376;
+        cursor: pointer;
+    }
+    
+    .form-check-label {
+        font-weight: 500;
+        color: #555;
+        cursor: pointer;
+    }
+
+    .results-count {
+        font-size: 0.9rem;
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="modern-header">{% trans 'Article Search Results' %}</h1>
 
     {% if search_term %}
-        <p>Searching for: <i>{{ search_term }}</i></p>
+        <p class="lead text-muted">Searching for: <strong class="text-dark">{{ search_term }}</strong></p>
     {% elif keyword %}
-        <p>Keyword: <i>{{ keyword }}</i></p>
+        <p class="lead text-muted">Keyword: <strong class="text-dark">{{ keyword }}</strong></p>
     {% endif %}
 
-	<div class="row">
-        <div class="col-md-8">
+	<div class="row mt-4">
+        <div class="col-lg-8 mb-4">
             <section aria-label="Results">
+                <div class="results-count">
+                    {% blocktrans count result_count=page_obj.paginator.count %}
+                        1 result found
+                    {% plural %}
+                        {{ result_count }} results found
+                    {% endblocktrans %}
+                </div>
+                
                 {% for article in articles %}
                     {% include "elements/article_listing.html" with article=article %}
                 {% empty %}
-                    <p>{% trans "No articles to display" %}.</p>
+                    <div class="alert alert-light text-center p-5 rounded-lg border shadow-sm">
+                        <i class="fa fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">{% trans "No articles to display" %}</h4>
+                        <p class="text-muted mb-0">Try adjusting your search filters or using different keywords.</p>
+                    </div>
                 {% endfor %}
+                
                 {% if articles %}
-                    {% include "elements/pagination.html" with form_id=form.id %}
+                    <div class="mt-5">
+                        {% include "elements/pagination.html" with form_id=form.id %}
+                    </div>
                 {% endif %}
             </section>
         </div>
-	    <div class="col-md-4">
+        
+	    <div class="col-lg-4">
             <section aria-label="{% trans 'Search' %}">
-                <div class="card">
+                <div class="card modern-search-card">
                     <div class="card-block">
-                        <div>
-                            <p>
-                                {% blocktrans count result_count=page_obj.paginator.count %}
-                                    1 result
-                                {% plural %}
-                                    {{ result_count }} results
-                                {% endblocktrans %}
-                            </p>
-                        </div>
                         <form method="GET" id="search_form">
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             {% if not keyword %}
-                                {% include 'elements/forms/errors.html'  with form=form%}
+                                {% include 'elements/forms/errors.html' with form=form%}
                                 {% bootstrap_form form %}
                             {% else %}
-                                {% trans "You are currently browsing by keyword" %}. <a href="{% url 'search' %}">{% trans 'Search for an article' %}.</a>
+                                <div class="alert alert-info rounded">
+                                    {% trans "You are currently browsing by keyword" %}. <br>
+                                    <a href="{% url 'search' %}" class="font-weight-bold">{% trans 'Search for an article instead' %} &rarr;</a>
+                                </div>
                             {% endif %}
                         </div>
+                        
                         {% if all_keywords %}
-                        <div class="form-group">
-                            <label>{% trans "Keywords" %}
-
-                                <ul class="list-inline comma-sep">
-                                    {% for keyword in all_keywords %}
-                                        <li><a href="{% url 'search' %}?keyword={{ keyword.word }}">{{ keyword.word }}</a></li>
-                                    {% endfor %}
-                                </ul>
-
-                            </label>
+                        <div class="form-group mb-4">
+                            <label>{% trans "Popular Keywords" %}</label>
+                            <div class="d-flex flex-wrap gap-2 mt-2" style="gap: 8px;">
+                                {% for keyword in all_keywords %}
+                                    <a href="{% url 'search' %}?keyword={{ keyword.word }}" class="badge badge-pill badge-light border text-secondary px-3 py-2" style="font-size:0.85rem; transition: all 0.2s;">
+                                        {{ keyword.word }}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% endif %}
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
+                        
+                        <div class="form-group mt-4 mb-0">
+                            <button type="submit" class="modern-btn-primary">
+                                <i class="fa fa-filter mr-2"></i> {% trans "Apply Filters" %}
+                            </button>
                         </div>
                         </form>
                     </div>
@@ -76,4 +256,5 @@
             </section>
         </div>
     </div>
+</div>
 {% endblock %}
