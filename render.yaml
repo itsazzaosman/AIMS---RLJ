@@ -49,8 +49,12 @@ services:
         sync: false
       - key: JANEWAY_CSRF_TRUSTED_ORIGINS
         sync: false
+      # sync: false (rather than a plain "value:") so that switching
+      # this to django_mailgun.MailgunBackend in the dashboard - or
+      # back to SMTP - actually sticks across syncs, instead of being
+      # silently reset to whatever's in this file on every push.
       - key: JANEWAY_EMAIL_BACKEND
-        value: django.core.mail.backends.smtp.EmailBackend
+        sync: false
       - key: JANEWAY_EMAIL_HOST
         value: smtp.gmail.com
       - key: JANEWAY_EMAIL_PORT
@@ -60,4 +64,15 @@ services:
       - key: JANEWAY_EMAIL_HOST_USER
         sync: false
       - key: JANEWAY_EMAIL_HOST_PASSWORD
+        sync: false
+      # Outbound SMTP is network-blocked on Render's free tier
+      # ("OSError: [Errno 101] Network is unreachable" connecting to
+      # smtp.gmail.com:587). django_mailgun.MailgunBackend sends over
+      # Mailgun's HTTPS API instead, which isn't affected by that
+      # block. Set JANEWAY_EMAIL_BACKEND above to
+      # "django_mailgun.MailgunBackend" and fill these in once you
+      # have a Mailgun account.
+      - key: JANEWAY_MAILGUN_ACCESS_KEY
+        sync: false
+      - key: JANEWAY_MAILGUN_SERVER_NAME
         sync: false

@@ -465,10 +465,12 @@ EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", True)
 EMAIL_TIMEOUT = int(os.environ.get("JANEWAY_EMAIL_TIMEOUT", 10))
 DUMMY_EMAIL_DOMAIN = "@journal.com"
 
-# Settings for use with Mailgun
-MAILGUN_ACCESS_KEY = ""
-MAILGUN_SERVER_NAME = ""
-MAILGUN_REQUIRE_TLS = False
+# Settings for use with Mailgun (django_mailgun.MailgunBackend). This
+# sends over Mailgun's HTTPS API rather than SMTP, which matters on
+# hosts (e.g. Render's free tier) that block outbound SMTP entirely.
+MAILGUN_ACCESS_KEY = os.environ.get("JANEWAY_MAILGUN_ACCESS_KEY", "")
+MAILGUN_SERVER_NAME = os.environ.get("JANEWAY_MAILGUN_SERVER_NAME", "")
+MAILGUN_REQUIRE_TLS = os.environ.get("JANEWAY_MAILGUN_REQUIRE_TLS", False)
 ENABLE_ENHANCED_MAILGUN_FEATURES = False  # Enables email tracking
 
 
