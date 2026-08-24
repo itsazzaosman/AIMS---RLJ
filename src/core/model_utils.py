@@ -560,7 +560,7 @@ class BaseSearchManagerMixin(Manager):
                     | Q(frozenauthor__last_name__iregex=search_regex)
                 )
             articles = articles.filter(q_object)
-            if site:
+            if site and site.__class__.__name__ == 'Journal':
                 # TODO: Support other site types
                 articles = articles.filter(journal=site)
 

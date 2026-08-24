@@ -62,6 +62,10 @@
                     </time>
                 </span>
 
+                {% if not request.journal and article.journal %}
+                    <i aria-hidden="true" class="fa fa-bookmark"></i> {{ article.journal.name }}
+                {% endif %}
+
                 {% if article.issue %}
                     <i aria-hidden="true" class="fa fa-book"></i>
                     <a class="issue-link" href="{{ article.issue.url }}">

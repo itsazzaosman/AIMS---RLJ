@@ -2373,6 +2373,13 @@ def old_search(request):
         split_term = [re.escape(word) for word in search_term.split(" ")]
         split_term.append(escaped)
         search_regex = "^({})$".format("|".join({name for name in split_term}))
+        filter_kwargs = {
+            "stage": submission_models.STAGE_PUBLISHED,
+            "date_published__lte": timezone.now(),
+        }
+        if getattr(request, "journal", None):
+            filter_kwargs["journal"] = request.journal
+            
         articles = (
             submission_models.Article.objects.filter(
                 (
@@ -2384,9 +2391,7 @@ def old_search(request):
                     Q(frozenauthor__first_name__iregex=search_regex)
                     | Q(frozenauthor__last_name__iregex=search_regex)
                 ),
-                journal=request.journal,
-                stage=submission_models.STAGE_PUBLISHED,
-                date_published__lte=timezone.now(),
+                **filter_kwargs
             )
             .distinct()
             .order_by(sort)
@@ -2394,20 +2399,26 @@ def old_search(request):
 
     # just single keyword atm. but keyword is included in article_search.
     elif keyword:
-        articles = submission_models.Article.objects.filter(
-            keywords__word=keyword,
-            journal=request.journal,
-            stage=submission_models.STAGE_PUBLISHED,
-            date_published__lte=timezone.now(),
-        ).order_by(sort)
+        filter_kwargs = {
+            "keywords__word": keyword,
+            "stage": submission_models.STAGE_PUBLISHED,
+            "date_published__lte": timezone.now(),
+        }
+        if getattr(request, "journal", None):
+            filter_kwargs["journal"] = request.journal
+            
+        articles = submission_models.Article.objects.filter(**filter_kwargs).order_by(sort)
 
     keyword_limit = 20
+    keyword_kwargs = {
+        "article__stage": submission_models.STAGE_PUBLISHED,
+        "article__date_published__lte": timezone.now(),
+    }
+    if getattr(request, "journal", None):
+        keyword_kwargs["article__journal"] = request.journal
+
     popular_keywords = (
-        submission_models.Keyword.objects.filter(
-            article__journal=request.journal,
-            article__stage=submission_models.STAGE_PUBLISHED,
-            article__date_published__lte=timezone.now(),
-        )
+        submission_models.Keyword.objects.filter(**keyword_kwargs)
         .annotate(articles_count=Count("article"))
         .order_by("-articles_count")[:keyword_limit]
     )

@@ -69,6 +69,11 @@
                             <span role="time">{{ article.date_published|date_human}}</span>
                         </time>
                     </span>
+                    {% if not request.journal and article.journal %}
+                    <span>
+                        <i aria-hidden="true" class="fa fa-bookmark"></i> {{ article.journal.name }}
+                    </span>
+                    {% endif %}
                     {% if article.issue %}
                     <a href="{{ article.issue.url }}" >
                         <i aria-hidden="true" class="fa fa-book"></i>
