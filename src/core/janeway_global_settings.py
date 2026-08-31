@@ -464,6 +464,9 @@ EMAIL_HOST_PASSWORD = os.environ.get("JANEWAY_EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = str(os.environ.get("JANEWAY_EMAIL_USE_TLS", "True")).lower() == "true"
 EMAIL_USE_SSL = str(os.environ.get("JANEWAY_EMAIL_USE_SSL", "False")).lower() == "true"
 EMAIL_TIMEOUT = int(os.environ.get("JANEWAY_EMAIL_TIMEOUT", 10))
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+
 DUMMY_EMAIL_DOMAIN = "@journal.com"
 
 # Settings for use with Mailgun (django_mailgun.MailgunBackend). This

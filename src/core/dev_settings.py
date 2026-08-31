@@ -20,6 +20,9 @@ EMAIL_HOST_USER = os.environ.get("JANEWAY_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("JANEWAY_EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = str(os.environ.get("JANEWAY_EMAIL_USE_TLS", "True")).lower() == "true"
 EMAIL_USE_SSL = str(os.environ.get("JANEWAY_EMAIL_USE_SSL", "False")).lower() == "true"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+
 
 URL_CONFIG = "domain"  # path or domain
 

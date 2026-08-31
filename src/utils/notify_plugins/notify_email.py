@@ -42,6 +42,10 @@ def send_email(
     else:
         from_email = request.press.main_contact
 
+    # Force the from email to be the SMTP authorized user so emails are not rejected
+    if getattr(settings, 'DEFAULT_FROM_EMAIL', None):
+        from_email = settings.DEFAULT_FROM_EMAIL
+
     if isinstance(to, str):
         if settings.DUMMY_EMAIL_DOMAIN in to:
             to = []
