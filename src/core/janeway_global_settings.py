@@ -461,7 +461,8 @@ EMAIL_HOST = os.environ.get("JANEWAY_EMAIL_HOST", "")
 EMAIL_PORT = os.environ.get("JANEWAY_EMAIL_PORT", "")
 EMAIL_HOST_USER = os.environ.get("JANEWAY_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("JANEWAY_EMAIL_HOST_PASSWORD", "")
-EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", True)
+EMAIL_USE_TLS = str(os.environ.get("JANEWAY_EMAIL_USE_TLS", "True")).lower() == "true"
+EMAIL_USE_SSL = str(os.environ.get("JANEWAY_EMAIL_USE_SSL", "False")).lower() == "true"
 EMAIL_TIMEOUT = int(os.environ.get("JANEWAY_EMAIL_TIMEOUT", 10))
 DUMMY_EMAIL_DOMAIN = "@journal.com"
 
