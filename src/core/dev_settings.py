@@ -14,6 +14,9 @@ EMAIL_BACKEND = (
     )
     or "django.core.mail.backends.console.EmailBackend"
 )
+ORCID_CLIENT_ID = "APP-W0WB6CHOHRNCKWNM"
+ORCID_CLIENT_SECRET = "e6091865-4360-4ccf-b239-4adc1a840c2e"
+
 EMAIL_HOST = os.environ.get("JANEWAY_EMAIL_HOST", "")
 EMAIL_PORT = os.environ.get("JANEWAY_EMAIL_PORT", "")
 EMAIL_HOST_USER = os.environ.get("JANEWAY_EMAIL_HOST_USER", "")
