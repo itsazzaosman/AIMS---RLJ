@@ -152,11 +152,10 @@ jenkins/test-results
 jenkins/test_results
 
 src/file_editor
-<<<<<<< HEAD
-=======
 .git_backup/
 
 *.pub
 eval *
 /collected-static
->>>>>>> docker-deployment
+render_db_backup.dump
+render_db_backup.sql

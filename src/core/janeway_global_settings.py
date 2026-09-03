@@ -45,6 +45,12 @@ DEBUG = False
 COMMAND = sys.argv[1:]
 IN_TEST_RUNNER = COMMAND[:1] == ["test"]
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    origin
+    for origin in os.environ.get("JANEWAY_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
@@ -451,17 +457,22 @@ EMAIL_BACKEND = (
     )
     or "django.core.mail.backends.smtp.EmailBackend"
 )
+
 EMAIL_HOST = os.environ.get("JANEWAY_EMAIL_HOST", "")
-EMAIL_PORT = os.environ.get("JANEWAY_EMAIL_PORT", "")
+EMAIL_PORT = int(os.environ.get("JANEWAY_EMAIL_PORT", 25))
 EMAIL_HOST_USER = os.environ.get("JANEWAY_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("JANEWAY_EMAIL_HOST_PASSWORD", "")
-EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", True)
+EMAIL_USE_TLS = os.environ.get("JANEWAY_EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_USE_SSL = os.environ.get("JANEWAY_EMAIL_USE_SSL", "False").lower() == "true"
+EMAIL_TIMEOUT = int(os.environ.get("JANEWAY_EMAIL_TIMEOUT", 10))
 DUMMY_EMAIL_DOMAIN = "@journal.com"
 
-# Settings for use with Mailgun
-MAILGUN_ACCESS_KEY = ""
-MAILGUN_SERVER_NAME = ""
-MAILGUN_REQUIRE_TLS = False
+# Settings for use with Mailgun (django_mailgun.MailgunBackend). This
+# sends over Mailgun's HTTPS API rather than SMTP, which matters on
+# hosts (e.g. Render's free tier) that block outbound SMTP entirely.
+MAILGUN_ACCESS_KEY = os.environ.get("JANEWAY_MAILGUN_ACCESS_KEY", "")
+MAILGUN_SERVER_NAME = os.environ.get("JANEWAY_MAILGUN_SERVER_NAME", "")
+MAILGUN_REQUIRE_TLS = os.environ.get("JANEWAY_MAILGUN_REQUIRE_TLS", False)
 ENABLE_ENHANCED_MAILGUN_FEATURES = False  # Enables email tracking
 
 

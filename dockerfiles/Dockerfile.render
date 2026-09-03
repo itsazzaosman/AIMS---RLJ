@@ -1,0 +1,14 @@
+FROM birkbeckctp/janeway-base:latest
+
+ADD . /vol/janeway
+WORKDIR /vol/janeway
+
+RUN apt-get update
+RUN apt-get install -y gettext
+RUN pip3 install -r requirements.txt --src /vol/janeway/.pip-src
+RUN find "/vol/janeway/src/plugins/" -print -iname "*requirements.txt" -exec pip3 install -r {} --src /vol/janeway/.pip-src \;
+RUN if [ -n "$(ls -A ./lib)" ]; then pip3 install -e lib/*; fi
+
+EXPOSE 8000
+STOPSIGNAL SIGINT
+ENTRYPOINT ["./dockerfiles/render-entrypoint.sh"]

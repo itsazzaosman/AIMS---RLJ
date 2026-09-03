@@ -1084,6 +1084,15 @@ p + .btn-background {
     visibility: visible;
     pointer-events: auto;
   }
+
+  /* Make mobile sidenav purple to match admin sidebar */
+  .sidenav {
+    background: #6a0dad;
+    color: white;
+  }
+  .sidenav li.active {
+    background: #4b116e;
+  }
 }
 
 /*

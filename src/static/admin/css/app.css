@@ -4834,6 +4834,10 @@ header {
   #profile-dropdown p {
     font-size: 0.8125rem; }
 
+.off-canvas {
+  background: #601A61; /* sidebar background */
+}
+
 .off-canvas .close-button {
   top: 0.875rem;
   color: #fefefe; }
@@ -4841,7 +4845,7 @@ header {
     color: #b7bac0; }
 
 .off-canvas .menu > li.title > a {
-  background: #2a2d37;
+  background: #a100a1; /* darker active/title */
   pointer-events: none; }
 
 .off-canvas .menu > li.subtitle > a {
@@ -4852,14 +4856,14 @@ header {
   font-family: "Open sans", sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #b7bac0;
+  color: #e9e3f6; /* light text for contrast on purple */
   padding: 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
   .off-canvas .menu > li > a img {
     width: 1.5rem;
     margin-right: 1.25rem; }
   .off-canvas .menu > li > a:hover {
-    background: #353946; }
+    background: #5b1db0; /* slightly lighter purple on hover */ }
 
 .uppercase, header h1, header .button, .off-canvas .menu > li.subtitle > a, .title-area h2, .title-area h4 {
   letter-spacing: .1em;

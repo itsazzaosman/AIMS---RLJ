@@ -38,12 +38,12 @@
 
 a.list-group-item,
 button.list-group-item {
-    color: #555555;
+    color: #ac16e7;
 }
 
 a.list-group-item .list-group-item-heading,
 button.list-group-item .list-group-item-heading {
-    color: #333333;
+    color: #ac16e7;
 }
 
 a.list-group-item:hover,
@@ -51,7 +51,7 @@ button.list-group-item:hover,
 a.list-group-item:focus,
 button.list-group-item:focus {
     text-decoration: none;
-    color: #555555;
+    color: #ac16e7;
     background-color: #f5f5f5;
 }
 
@@ -64,7 +64,7 @@ button.list-group-item {
 .list-group-item.disabled:hover,
 .list-group-item.disabled:focus {
     background-color: #eeeeee;
-    color: #777777;
+    color: #ac16e7;
     cursor: not-allowed;
 }
 
@@ -77,7 +77,7 @@ button.list-group-item {
 .list-group-item.disabled .list-group-item-text,
 .list-group-item.disabled:hover .list-group-item-text,
 .list-group-item.disabled:focus .list-group-item-text {
-    color: #777777;
+    color: #ac16e7;
 }
 
 .list-group-item.active,
@@ -360,11 +360,11 @@ th {
 }
 
 .bs-callout-default {
-    border-left-color: #777;
+    border-left-color: #ac16e7;
 }
 
 .bs-callout-default h4 {
-    color: #777;
+    color: #ac16e7;
 }
 
 .bs-callout-primary {

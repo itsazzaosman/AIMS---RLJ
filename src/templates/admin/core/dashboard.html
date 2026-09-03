@@ -1,6 +1,10 @@
 {% extends "admin/core/base.html" %}
 {% load roles securitytags %}
 
+{% block css %}
+{{ block.super }}
+{% endblock css %}
+
 {% block title %}Dashboard{% endblock title %}
 {% block title-section %}Dashboard{% endblock %}
 {% block title-sub %}Summary{% endblock %}

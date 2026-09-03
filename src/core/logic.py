@@ -114,9 +114,12 @@ def get_confirm_account_url(request, user, next_url=""):
     return request.site_type.site_url(
         reverse(
             "core_confirm_account",
-            kwargs={"token": user.confirmation_code},
         ),
-        query={"next": next_url or request.GET.get("next", "")},
+        query={
+            "email": user.email,
+            "code": user.confirmation_code,
+            "next": next_url or request.GET.get("next", ""),
+        },
     )
 
 

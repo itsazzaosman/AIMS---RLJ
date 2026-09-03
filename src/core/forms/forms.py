@@ -190,7 +190,10 @@ class RegistrationForm(forms.ModelForm, CaptchaForm):
         ),
         required=False,
     )
-
+    privacy_policy = forms.BooleanField(
+        label="I agree to the Privacy Policy",
+        required=True,
+    )
     class Meta:
         model = models.Account
         fields = (
@@ -216,6 +219,38 @@ class RegistrationForm(forms.ModelForm, CaptchaForm):
             ).value
             if not send_reader_notifications:
                 self.fields.pop("register_as_reader")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+
+        existing_user = models.Account.objects.filter(
+            email__iexact=email
+        ).first()
+
+        if existing_user and existing_user.is_active:
+            raise forms.ValidationError(
+                "Account with this Email already exists."
+            )
+
+        return email
+
+    def validate_unique(self):
+        """
+        Allow an existing inactive account to be reused during registration.
+        Active accounts are rejected by clean_email().
+        """
+        email = self.cleaned_data.get("email")
+
+        if email:
+            existing_user = models.Account.objects.filter(
+                email__iexact=email
+            ).first()
+
+            if existing_user and not existing_user.is_active:
+                return
+
+        super().validate_unique()
+
 
     def clean_password_2(self):
         password_1 = self.cleaned_data.get("password_1")

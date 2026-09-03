@@ -461,7 +461,29 @@ def register(request, orcid_token=None):
                     )
 
             else:
-                new_user = form.save()
+                existing_user = models.Account.objects.filter(
+                    email__iexact=form.cleaned_data["email"],
+                    is_active=False,
+                ).first()
+
+                if existing_user:
+                    new_user = existing_user
+                    new_user.first_name = form.cleaned_data["first_name"]
+                    new_user.middle_name = form.cleaned_data["middle_name"]
+                    new_user.last_name = form.cleaned_data["last_name"]
+                    new_user.orcid = form.cleaned_data["orcid"]
+                    new_user.set_password(form.cleaned_data["password_1"])
+                    new_user.is_active = False
+
+                    import random
+
+                    new_user.confirmation_code = "".join(
+                        [str(random.randint(0, 9)) for _ in range(6)]
+                    )
+                    new_user.email_sent = timezone.now()
+                    new_user.save()
+                else:
+                    new_user = form.save()
 
             if request.journal:
                 submission_limited = request.journal.get_setting(
@@ -506,23 +528,21 @@ def orcid_registration(request, token):
 
     return render(request, template, context)
 
-
-def activate_account(request, token):
+def activate_account(request):
     """
-    Activates a user account if an Account object with the
-    matching token is found and is not already active.
-    :param request: HttpRequest object
-    :param token: string, Account.confirmation_token
-    :return: HttpResponse object
+    Activates a user account using the confirmation link.
     """
     next_url = request.GET.get("next", "")
+    email = request.GET.get("email", "")
+    code = request.GET.get("code", "")
 
     try:
-        account = models.Account.objects.get(confirmation_code=token, is_active=False)
-    except models.Account.DoesNotExist:
-        account = None
+        account = models.Account.objects.get(
+            email=email,
+            confirmation_code=code,
+            is_active=False,
+        )
 
-    if account and request.method == "POST":
         account.is_active = True
         account.confirmation_code = None
         account.save()
@@ -530,18 +550,19 @@ def activate_account(request, token):
         messages.add_message(
             request,
             messages.SUCCESS,
-            _("Account activated"),
+            _("Account activated. You can now log in."),
         )
 
         return redirect(logic.reverse_with_next("core_login", next_url))
 
-    template = "admin/core/accounts/activate_account.html"
-    context = {
-        "account": account,
-    }
+    except models.Account.DoesNotExist:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            _("Invalid or expired activation link."),
+        )
 
-    return render(request, template, context)
-
+    return redirect(logic.reverse_with_next("core_login", next_url))
 
 @login_required
 def edit_profile(request):
@@ -676,7 +697,6 @@ def edit_profile(request):
     }
 
     return render(request, template, context)
-
 
 def public_profile(request, uuid):
     """

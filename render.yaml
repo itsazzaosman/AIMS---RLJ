@@ -1,0 +1,78 @@
+databases:
+  - name: janeway-demo-db
+    plan: free
+    databaseName: janeway
+    user: janeway
+
+services:
+  - type: web
+    name: janeway-email-auth-demo
+    runtime: docker
+    dockerfilePath: ./dockerfiles/Dockerfile.render
+    dockerContext: .
+    plan: free
+    # No healthCheckPath: the homepage depends on the DB, which isn't
+    # ready until migrate + install_janeway finish in the entrypoint.
+    # Falling back to Render's plain TCP port-open check (15 min
+    # allowance) instead of an HTTP check that would time out sooner.
+    envVars:
+      - key: JANEWAY_SETTINGS_MODULE
+        value: core.janeway_global_settings
+      - key: DB_VENDOR
+        value: postgres
+      - key: DB_HOST
+        fromDatabase:
+          name: janeway-demo-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: janeway-demo-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: janeway-demo-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: janeway-demo-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: janeway-demo-db
+          property: database
+      # sync: false so Render never re-stamps these from this file on
+      # a Blueprint sync. Set once in the dashboard's Environment tab
+      # after the first deploy, once you know the assigned onrender.com
+      # hostname - a plain "value:" here would get silently reapplied
+      # (overwriting your manual edit) on every subsequent push/sync.
+      - key: JANEWAY_PRESS_DOMAIN
+        sync: false
+      - key: JANEWAY_CSRF_TRUSTED_ORIGINS
+        sync: false
+      # sync: false (rather than a plain "value:") so that switching
+      # this to django_mailgun.MailgunBackend in the dashboard - or
+      # back to SMTP - actually sticks across syncs, instead of being
+      # silently reset to whatever's in this file on every push.
+      - key: JANEWAY_EMAIL_BACKEND
+        sync: false
+      - key: JANEWAY_EMAIL_HOST
+        value: smtp.gmail.com
+      - key: JANEWAY_EMAIL_PORT
+        value: "587"
+      - key: JANEWAY_EMAIL_USE_TLS
+        value: "True"
+      - key: JANEWAY_EMAIL_HOST_USER
+        sync: false
+      - key: JANEWAY_EMAIL_HOST_PASSWORD
+        sync: false
+      # Outbound SMTP is network-blocked on Render's free tier
+      # ("OSError: [Errno 101] Network is unreachable" connecting to
+      # smtp.gmail.com:587). django_mailgun.MailgunBackend sends over
+      # Mailgun's HTTPS API instead, which isn't affected by that
+      # block. Set JANEWAY_EMAIL_BACKEND above to
+      # "django_mailgun.MailgunBackend" and fill these in once you
+      # have a Mailgun account.
+      - key: JANEWAY_MAILGUN_ACCESS_KEY
+        sync: false
+      - key: JANEWAY_MAILGUN_SERVER_NAME
+        sync: false
